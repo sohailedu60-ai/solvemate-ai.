@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<title>SolveMate AI — Everyday Problem Solver</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--panel2:#17243a;--line:#26364f;--text:#f4f7fb;--muted:#a8b5c9;--mint:#7ce6c2;--blue:#8ab4ff;--danger:#ffb7a9}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(ellipse at top,#152846 0%,var(--bg) 48%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+button,textarea,input{font:inherit}button{cursor:pointer}
+.wrap{max-width:760px;margin:auto;padding:22px 16px 40px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:24px}.logo{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--mint),var(--blue));color:#102033;font-size:25px;font-weight:900;box-shadow:0 8px 24px #7ce6c225}
+.brand{font-size:20px;font-weight:800;letter-spacing:-.5px}.tag{font-size:12px;color:var(--muted)}
+.pill{margin-left:auto;border:1px solid #3b536f;color:var(--mint);border-radius:99px;padding:6px 10px;font-size:11px;font-weight:700;white-space:nowrap}
+.hero h1{font-size:clamp(30px,7vw,44px);line-height:1.07;letter-spacing:-1.5px;margin:0 0 12px}.hero h1 span{color:var(--mint)}.hero p{margin:0;color:var(--muted);max-width:580px}
+.panel{background:#111d2ee8;border:1px solid var(--line);border-radius:24px;padding:18px;margin-top:22px;box-shadow:0 18px 55px #0002}
+.label{display:block;font-weight:700;margin-bottom:10px}.textarea{width:100%;min-height:126px;resize:vertical;background:#0b1525;color:var(--text);border:1px solid #334660;border-radius:16px;padding:14px;outline:none}.textarea:focus{border-color:var(--mint);box-shadow:0 0 0 3px #7ce6c218}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.primary{border:0;border-radius:14px;padding:12px 17px;background:var(--mint);color:#09201b;font-weight:800}.secondary{border:1px solid #3b506a;border-radius:14px;padding:11px 14px;background:#17253a;color:var(--text);font-weight:700}.hint{color:var(--muted);font-size:12px;margin-top:9px}
+.section-title{font-size:17px;margin:24px 0 12px;letter-spacing:-.3px}.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{background:#15243a;border:1px solid #2c415d;color:#dce7f5;border-radius:99px;padding:9px 12px;font-size:13px}.chip:hover{border-color:var(--mint)}
+.result{display:none}.result.show{display:block}.result-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.result h2{font-size:21px;margin:0}.small{font-size:12px;color:var(--muted)}ol{padding-left:22px}li{padding-left:4px;margin:10px 0}.note{background:#0c1829;border:1px solid #2a3e58;padding:13px 14px;border-radius:14px;color:#c7d5e8;font-size:13px}
+.saved-item{border:1px solid #2b3c55;border-radius:15px;padding:12px;margin-top:10px;background:#0c1727}.saved-item strong{display:block;margin-bottom:4px}.saved-item p{margin:0;color:var(--muted);font-size:13px}.empty{color:var(--muted);font-size:13px;padding:10px 0}
+footer{margin-top:28px;color:#8594aa;font-size:12px;text-align:center}.tiny{font-size:11px;color:#8fa0b7}
+@media(min-width:600px){.panel{padding:22px}.wrap{padding-top:30px}}
+</style>
+
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#101827">
+<meta name="description" content="Solve everyday problems with practical step-by-step action plans.">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => console.warn('Offline support unavailable:', err));
+  });
+}
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'inline-block';
+});
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'none';
+});
+</script>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">✓</div>
+  <div><div class="brand">SolveMate <span style="color:var(--mint)">AI</span></div><div class="tag">Small steps. Real progress.</div></div>
+  <button class="secondary" id="installBtn" style="display:none;margin-left:auto;padding:7px 10px;font-size:12px" onclick="if(deferredInstallPrompt){deferredInstallPrompt.prompt();deferredInstallPrompt=null}else{alert('Open browser menu and choose Install app or Add to Home screen.')}">Install app</button>
+</header>
+<section class="hero">
+  <h1>Stuck on something?<br><span>Let's solve it.</span></h1>
+  <p>Describe an everyday problem and get a practical plan you can start using today.</p>
+</section>
+<section class="panel">
+  <label class="label" for="problem">What problem are you facing?</label>
+  <textarea id="problem" class="textarea" maxlength="1200" placeholder="Example: I have too many tasks and don't know what to do first..."></textarea>
+  <div class="row" style="margin-top:12px">
+    <button class="primary" id="solve">Make my action plan ↗</button>
+    <button class="secondary" id="clear">Clear</button>
+  </div>
+  <div class="hint">Prototype mode: solutions are generated from built-in practical guides. No account or paid API needed.</div>
+</section>
+<h3 class="section-title">Try a common problem</h3>
+<div class="chips">
+  <button class="chip" data-p="I keep procrastinating and cannot start my work.">⏳ Procrastination</button>
+  <button class="chip" data-p="I need to save money because my budget is tight.">💸 Save money</button>
+  <button class="chip" data-p="I have too many tasks and feel overwhelmed.">🧩 Too many tasks</button>
+  <button class="chip" data-p="I want to learn a new skill but have little time.">📚 Learn a skill</button>
+  <button class="chip" data-p="I need to make a difficult decision.">🧭 Make a decision</button>
+  <button class="chip" data-p="I have a problem with a friend and need to talk about it.">💬 Communication</button>
+</div>
+<section class="panel result" id="result" aria-live="polite">
+  <div class="result-head"><div><div class="small">YOUR ACTION PLAN</div><h2 id="resultTitle">Let's get started</h2></div><button class="secondary" id="save">☆ Save</button></div>
+  <div id="resultBody"></div>
+  <div class="row" style="margin-top:16px"><button class="secondary" id="copy">Copy plan</button><button class="secondary" id="again">Try another</button></div>
+  <p class="tiny" id="saveStatus"></p>
+</section>
+<section class="panel">
+  <div class="result-head"><div><h2>Saved solutions</h2><div class="small">Stored on this device only</div></div><button class="secondary" id="clearSaved">Clear all</button></div>
+  <div id="savedList"><div class="empty">Your saved plans will appear here.</div></div>
+</section>
+<footer>Made for everyday progress · SolveMate AI is an early prototype, not a substitute for professional advice.</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let current=null;
+const guides=[
+ {keys:["procrastinat","start my work","can't start","cannot start","lazy","avoid work"],title:"Beat procrastination",intro:"Make starting so small that it feels manageable.",steps:["Choose one task that matters most today.","Break it into a first action that takes 2 minutes (open the document, write one sentence, or gather the tools).","Set a 10-minute timer and work only until it ends.","Put your phone out of reach and close one distracting tab.","When the timer ends, choose: continue for another 10 minutes or take a 3-minute break."],next:"Start the 2-minute action now. Progress is more useful than waiting to feel motivated."},
+ {keys:["save money","budget","tight","spending","expenses","broke"],title:"Make a simple money plan",intro:"Get clarity before trying to cut everything.",steps:["Write down how much money you have until your next income.","List essential costs first: housing, food, transport, bills and study/work needs.","Check the last 7 days of spending and find one category to reduce.","Set a daily spending limit for flexible purchases.","Move any small amount you can afford into savings; do not borrow or invest money you need for essentials."],next:"Track every purchase for the next 3 days. You cannot improve what you cannot see."},
+ {keys:["too many tasks","overwhelmed","tasks","busy","time management","organize"],title:"Get control of your tasks",intro:"You do not need to do everything at once.",steps:["Write every task in one list so you don't have to keep remembering it.","Mark each item: urgent, important, or can wait.","Pick just 3 priorities for today.","Turn the first priority into a next physical action that takes 15 minutes or less.","Schedule a realistic time block and leave a little buffer for unexpected tasks."],next:"Choose your first priority and work on it for 15 minutes before checking messages."},
+ {keys:["learn a skill","learning","study","learn","language","course"],title:"Build a learning habit",intro:"A small repeatable routine beats an ambitious plan you cannot maintain.",steps:["Choose one specific outcome, such as learning 10 useful phrases or completing one lesson.","Find one free, trustworthy learning resource.","Practice for 15 minutes at the same time each day.","Use active recall: close the material and explain what you remember.","At the end of the week, test yourself and adjust the next week's plan."],next:"Set a 15-minute session for today and decide exactly what you will finish."},
+ {keys:["decision","decide","choice","choose","confused","should i"],title:"Make a clearer decision",intro:"Reduce the decision to a few criteria you can compare.",steps:["Write the decision as one clear question.","List your realistic options, including waiting or doing nothing if appropriate.","Choose the 3 factors that matter most (cost, time, risk, wellbeing, or future opportunity).","Compare each option against those factors and write the biggest downside of each.","If the decision is reversible, run a small low-risk test before committing."],next:"Write down what matters most to you before asking everyone else for opinions."},
+ {keys:["friend","relationship","talk about","communication","argument","conflict"],title:"Prepare for a difficult conversation",intro:"Aim to understand each other and agree on one next step.",steps:["Wait until you are calm enough to speak without attacking or insulting.","Describe the specific situation, not the other person's whole character.","Use an 'I' statement: 'I felt ___ when ___ because ___.'.","Ask for their perspective and listen without interrupting.","Agree on one specific change or boundary and when to check in again."],next:"Draft your opening sentence before starting the conversation. If you feel unsafe, prioritize your safety and seek trusted support."},
+ {keys:["job","career","business","earn","income","customer"],title:"Test a practical opportunity",intro:"Validate the problem before investing time or money.",steps:["Define the exact problem and who experiences it.","Talk to 3–5 potential users or customers and ask how they solve it today.","Offer one simple solution manually before building a complicated product.","Estimate costs, price, time required, and what could go wrong.","Run a small test with a clear success measure before spending more."],next:"Write one sentence describing the person you want to help and the problem they have."}
+];
+function makePlan(raw){
+ const p=raw.trim(); const low=p.toLowerCase();
+ if(!p) return null;
+ let g=guides.find(x=>x.keys.some(k=>low.includes(k)));
+ if(!g) g={title:"Break the problem into steps",intro:"Start by making the problem specific and choosing a low-risk first move.",steps:["Describe the problem in one sentence, including what is happening and what you want instead.","Separate facts you know from assumptions you are making.","List 2–3 possible actions, even if they are imperfect.","Choose the smallest safe action that gives you useful information.","Set a time to review what happened and decide the next step."],next:"Write what a successful outcome would look like in one clear sentence."};
+ return {problem:p,title:g.title,intro:g.intro,steps:g.steps,next:g.next,created:new Date().toISOString()};
+}
+function render(plan){
+ current=plan; $("resultTitle").textContent=plan.title;
+ $("resultBody").innerHTML="<p>"+escapeHtml(plan.intro)+"</p><ol>"+plan.steps.map(s=>"<li>"+escapeHtml(s)+"</li>").join("")+"</ol><div class='note'><strong>First step to take now</strong><br>"+escapeHtml(plan.next)+"</div>";
+ $("result").classList.add("show"); $("saveStatus").textContent=""; $("result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+$("solve").addEventListener("click",()=>{const plan=makePlan($("problem").value);if(!plan){$("problem").focus();$("problem").placeholder="Type a problem first, then tap Make my action plan.";return;}render(plan);});
+$("clear").addEventListener("click",()=>{$("problem").value="";$("result").classList.remove("show");$("problem").focus();});
+document.querySelectorAll("[data-p]").forEach(b=>b.addEventListener("click",()=>{$("problem").value=b.dataset.p;const p=makePlan(b.dataset.p);render(p);}));
+$("again").addEventListener("click",()=>{$("result").classList.remove("show");$("problem").focus();});
+$("copy").addEventListener("click",async()=>{if(!current)return;const text=current.title+"\n\nProblem: "+current.problem+"\n\n"+current.intro+"\n"+current.steps.map((s,i)=>(i+1)+". "+s).join("\n")+"\n\nFirst step: "+current.next;try{await navigator.clipboard.writeText(text);$("saveStatus").textContent="Plan copied to clipboard.";}catch(e){$("saveStatus").textContent="Copy is not available in this browser. You can select and copy the text manually."; }});
+function getSaved(){try{return JSON.parse(localStorage.getItem("solvemate_saved")||"[]")}catch(e){return[]}}
+function setSaved(a){localStorage.setItem("solvemate_saved",JSON.stringify(a));}
+function renderSaved(){const list=getSaved();const root=$("savedList");if(!list.length){root.innerHTML="<div class='empty'>Your saved plans will appear here.</div>";return;}root.innerHTML=list.map((p,i)=>"<div class='saved-item'><strong>"+escapeHtml(p.title)+"</strong><p>"+escapeHtml(p.problem)+"</p><div class='row' style='margin-top:9px'><button class='secondary' data-open='"+i+"'>Open</button><button class='secondary' data-delete='"+i+"'>Delete</button></div></div>").join("");root.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{const p=getSaved()[+b.dataset.open];$("problem").value=p.problem;render(p);});root.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>{const a=getSaved();a.splice(+b.dataset.delete,1);setSaved(a);renderSaved();});}
+$("save").addEventListener("click",()=>{if(!current)return;const a=getSaved();if(!a.some(p=>p.problem===current.problem)){a.unshift(current);setSaved(a.slice(0,30));$("saveStatus").textContent="Saved on this device.";renderSaved();}else $("saveStatus").textContent="This problem is already saved.";});
+$("clearSaved").addEventListener("click",()=>{if(confirm("Delete all saved solutions from this device?")){setSaved([]);renderSaved();}});
+renderSaved();
+</script>
+</body>
+</html>
